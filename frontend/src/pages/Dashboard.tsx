@@ -4,8 +4,6 @@ import styles from "../styles/card.module.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { type Count } from "../types/response";
-// import '@flaticon/flaticon-uicons/css/bold/rounded.css';
-// import '@flaticon/flaticon-uicons/css/regular/rounded.css';
 import "@flaticon/flaticon-uicons/css/all/all.css";
 import Button from "../components/Button";
 import { NavLink } from "react-router-dom";
