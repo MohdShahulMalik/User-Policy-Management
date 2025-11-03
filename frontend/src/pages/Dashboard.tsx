@@ -89,8 +89,12 @@ export default function Dashboard() {
       </div>
 
       <div className={clsx("mt-2 flex justify-start gap-4")}>
-        <NavLink to="/users"><Button text="Users" /></NavLink>
-        <NavLink to = "/policies"><Button text="Policies" /></NavLink>
+        <NavLink to="/users">
+          <Button text="Users" className="font-bold" />
+        </NavLink>
+        <NavLink to="/policies">
+          <Button text="Policies" className="font-bold" />
+        </NavLink>
       </div>
     </div>
   );
