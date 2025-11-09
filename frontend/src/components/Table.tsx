@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import type { Employees, Policies } from "../types/tables";
 import Button from "./Button";
 
@@ -45,8 +46,7 @@ export default function Table(props: TableProps) {
   const headers = getHeaders(props.tableName);
 
   return (
-    <table className={props.className}>
-      <caption>{props.tableName}</caption>
+    <table className={clsx(props.className, "w-[90svw] rounded-2xl")}>
       <colgroup>
         {headers.map((header, index) => (
           <col
@@ -57,20 +57,22 @@ export default function Table(props: TableProps) {
       </colgroup>
 
       <thead>
-        <tr>
+        <tr className="border-b bg-surface-800">
           {headers.map((header, index) => (
-            <th key={index}>{header.display}</th>
+            <th key={index} className="text-left px-4 py-2">
+              {header.display}
+            </th>
           ))}
         </tr>
       </thead>
 
       <tbody>
         {props.tableData.map((row, rowIndex) => (
-          <tr key={getNestedValue(row, "id") || rowIndex}>
+          <tr className="border-b" key={getNestedValue(row, "id") || rowIndex}>
             {headers.map((header, colIndex) => (
-              <td key={colIndex}>
+              <td key={colIndex} className="px-4 py-2">
                 {header.isAction ? (
-                  <article>
+                  <article className="flex gap-0.5">
                     <Button
                       text="Edit"
                       size="small"

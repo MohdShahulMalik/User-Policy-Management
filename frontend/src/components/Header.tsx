@@ -11,12 +11,12 @@ interface HeaderProps {
 export default function Header(props: HeaderProps) {
   const clientClassName = `${props.className}` || "";
   return (
-    <header className={clsx("app-header", clientClassName)}>
-      <div className="header-left">
+    <header className={clsx("app-header", clientClassName, "w-[90svw] flex justify-between h-[13svh] py-4 px-6 items-center")}>
+      <h1 className="font-bold text-3xl">
         {props.children}
-      </div>
-      <div className="header-right">
-        <SearchInput />
+      </h1>
+      <div className="flex gap-5 w-[30%] justify-end">
+        <SearchInput/>
         {props.button}
       </div>
     </header>

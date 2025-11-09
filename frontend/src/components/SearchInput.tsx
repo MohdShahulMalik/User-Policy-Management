@@ -10,8 +10,8 @@ export default function SearchInput(props: SearchInputProps) {
     <div className={clsx("search-input-container", clientClassName)}>
       <input
         type="text"
-        placeholder="Search..."
-        className="search-input"
+        placeholder="Search Employee..."
+        className="h-12 text-[1.125rem] text-center border-3 border-border-2 rounded-md focus:outline-none focus:ring-3 focus:ring-focus-ring focus:border-transparent transition-colors"
       />
     </div>
   );

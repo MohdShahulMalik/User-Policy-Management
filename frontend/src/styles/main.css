@@ -18,6 +18,7 @@
   /* Light mode - Border colors */
   --color-border-default: oklch(0.6 0.2 266);               
   --color-border-muted: oklch(0.7 0.2 266);         
+  --color-border-2: oklch(0.5 0.1 240);
   
   /* Semantic/state colors (same for both modes) */
   --color-primary: oklch(0.4 0.2 266);
@@ -26,6 +27,7 @@
   --color-warning: oklch(0.5 0.2 100);
   --color-success: oklch(0.5 0.2 160);
   --color-info: oklch(0.5 0.2 260);
+  --color-focus-ring: oklch(0.6 0.15 240); 
 }
 
 /* Dark mode overrides */
@@ -39,12 +41,14 @@
     --color-accent: oklch(0.5 0.2 266);
     --color-border-default: oklch(0.4 0.2 266);
     --color-border-muted: oklch(0.3 0.2 266);
+    --color-border-2: oklch(0.4 0.1 240);
     --color-primary: oklch(0.76 0.2 266);
     --color-secondary: oklch(0.76 0.2 86);
     --color-danger: oklch(0.7 0.2 30);
     --color-warning: oklch(0.7 0.2 100);
     --color-success: oklch(0.7 0.2 160);
     --color-info: oklch(0.5 0.2 260);
+    --color-focus-ring: oklch(0.7 0.2 240);
   }
 }
 
