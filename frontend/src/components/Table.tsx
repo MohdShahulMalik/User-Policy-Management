@@ -1,10 +1,12 @@
-import type { Users, Policies } from "../types/tables";
+import type { Employees, Policies } from "../types/tables";
 import Button from "./Button";
 
 interface TableProps {
   className?: string;
-  tableData: Users[] | Policies[];
-  tableName: "Users" | "Policies";
+  tableData: Employees[] | Policies[];
+  tableName: "Employees" | "Policies";
+  onEditClick: (index: number) => void;
+  onDeleteClick: (index: number) => void;
 }
 
 // Helper function to get nested property values
@@ -18,11 +20,11 @@ interface HeaderConfig {
   isAction?: boolean; // Flag for action column
 }
 
-function getHeaders(tableName: "Users" | "Policies"): HeaderConfig[] {
-  if (tableName === "Users") {
+function getHeaders(tableName: "Employees" | "Policies"): HeaderConfig[] {
+  if (tableName === "Employees") {
     return [
-      { display: "Id", dataKey: "id" },
-      { display: "Name", dataKey: ["name.first", "name.last"] },
+      { display: "Id", dataKey: "id.id.String" },
+      { display: "Name", dataKey: ["name.first_name", "name.last_name"] },
       { display: "Email", dataKey: "email" },
       { display: "Role", dataKey: "role" },
       { display: "Action", isAction: true },
@@ -65,10 +67,10 @@ export default function Table(props: TableProps) {
             {headers.map((header, colIndex) => (
               <td key={colIndex}>
                 {header.isAction ? (
-                  <>
-                    <Button text="Edit" />
-                    <Button text="Delete" />
-                  </>
+                  <article>
+                    <Button text="Edit" size="small" onClick={() => props.onEditClick(rowIndex)}/>
+                    <Button text="Delete" size="small" onClick={() => props.onDeleteClick(rowIndex)}/>
+                  </article>
                 ) : header.dataKey ? (
                   Array.isArray(header.dataKey) ? (
                     header.dataKey.map(key => getNestedValue(row, key)).join(" ")

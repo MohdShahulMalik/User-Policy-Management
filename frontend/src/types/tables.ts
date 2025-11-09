@@ -1,6 +1,6 @@
 import type { Name, RecordId } from "./utils";
 
-export interface Users {
+export interface Employees {
   id: RecordId;
   name: Name;
   email: string;

@@ -1,10 +1,10 @@
 import { type FormFields } from "../types/utils";
 
-export const userFormConfig: FormFields[] = [
-  {label: "First Name", type: "text"},
-  {label: "Last Name", type: "text"},
-  {label: "Eamail", type: "email"},
-  {label: "Role", type: "select", options: ["Admin", "User", "Viewer"]}
+export const employeeFormConfig = [
+  {name: "name.first_name", label: "First Name", type: "text"},
+  {name: "name.last_name", label: "Last Name", type: "text"},
+  {name: "email", label: "Email", type: "email"},
+  {name: "role", label: "Role", type: "select", options: ["Admin", "User", "Viewer"]}
 ];
 
 export const policyFormConfig: FormFields[] = [

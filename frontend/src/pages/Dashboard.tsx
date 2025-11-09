@@ -9,22 +9,22 @@ import Button from "../components/Button";
 import { NavLink } from "react-router-dom";
 
 export default function Dashboard() {
-  const [totalUsers, setTotalUsers] = useState<number>(0);
+  const [totalEmployees, setTotalEmployees] = useState<number>(0);
   const [totalPolicies, setTotalPolicies] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const userCountPromise = axios.get<Count>(
+    const employeeCountPromise = axios.get<Count>(
       "http://localhost:3100/employees/count",
     );
     const policyCountPromise = axios.get<Count>(
       "http://localhost:3100/policies/count",
     );
 
-    Promise.all([userCountPromise, policyCountPromise])
-      .then(([userResponse, policyResponse]) => {
-        setTotalUsers(userResponse.data.count);
+    Promise.all([employeeCountPromise, policyCountPromise])
+      .then(([employeeResponse, policyResponse]) => {
+        setTotalEmployees(employeeResponse.data.count);
         setTotalPolicies(policyResponse.data.count);
       })
       .catch((error) => {
@@ -64,8 +64,8 @@ export default function Dashboard() {
             )}
           ></i>
           <div className={clsx("font-bold text-foreground")}>
-            <p>Total Users</p>
-            <p>{totalUsers}</p>
+            <p>Total Employees</p>
+            <p>{totalEmployees}</p>
           </div>
         </div>
 
@@ -89,11 +89,11 @@ export default function Dashboard() {
       </div>
 
       <div className={clsx("mt-2 flex justify-start gap-4")}>
-        <NavLink to="/users">
-          <Button text="Users" className="font-bold" />
+        <NavLink to="/employees">
+          <Button text="Employees" size="medium" className="font-bold" />
         </NavLink>
         <NavLink to="/policies">
-          <Button text="Policies" className="font-bold" />
+          <Button text="Policies" size="medium" className="font-bold" />
         </NavLink>
       </div>
     </div>

@@ -7,6 +7,7 @@ interface ButtonProps {
   formMethod?: "dialog";
   onClick?: MouseEventHandler<HTMLButtonElement>;
   type?: "submit" | "button" | "reset";
+  size: "small" | "medium";
 }
 
 export default function Button(props: ButtonProps) {
@@ -17,7 +18,11 @@ export default function Button(props: ButtonProps) {
       type={props.type || "button"}
       className={clsx(
         clientClassName,
-        "cursor-pointer content-center rounded-3xl bg-blue-300 px-4 pt-2.5 pb-3 text-center text-[1.125rem] text-foreground transition duration-300 hover:bg-blue-400 active:bg-blue-300",
+        "cursor-pointer content-center rounded-3xl bg-blue-300 text-center text-foreground transition duration-300 hover:bg-blue-400 active:bg-blue-300",
+        {
+          "px-4 pt-2.5 pb-3 text-[1.125rem]": props.size === "medium",
+          "px-2 pt-0.5 pb-1.5 text-[1rem]": props.size === "small",
+        },
       )}
       formMethod={props.formMethod}
       onClick={props.onClick}
