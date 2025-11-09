@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type ChangeEvent } from "react";
 import Modal, {
   type ModalHandle,
   ConfirmModal,
@@ -14,85 +14,85 @@ import type { Employees } from "../types/tables";
 export default function Employees() {
   const [employeesData, setEmployeesData] = useState<Employees[]>([
     {
-      id: { tb: "employees", id: { String: "a1b2c3d4-e5f6-7890-1234-567890abcdef" } },
+      id: { tb: "employees", id: { String: "1" } },
       name: { first_name: "John", last_name: "Doe" },
       email: "john.doe@example.com",
       role: "Admin",
     },
     {
-      id: { tb: "employees", id: { String: "b2c3d4e5-f6a7-8901-2345-67890abcdef0" } },
+      id: { tb: "employees", id: { String: "2" } },
       name: { first_name: "Jane", last_name: "Smith" },
       email: "jane.smith@example.com",
       role: "User",
     },
     {
-      id: { tb: "employees", id: { String: "c3d4e5f6-a7b8-9012-3456-7890abcdef01" } },
+      id: { tb: "employees", id: { String: "3" } },
       name: { first_name: "Peter", last_name: "Jones" },
       email: "peter.jones@example.com",
       role: "User",
     },
     {
-      id: { tb: "employees", id: { String: "d4e5f6a7-b8c9-0123-4567-890abcdef012" } },
+      id: { tb: "employees", id: { String: "4" } },
       name: { first_name: "Susan", last_name: "Williams" },
       email: "susan.williams@example.com",
       role: "Viewer",
     },
     {
-      id: { tb: "employees", id: { String: "e5f6a7b8-c9d0-1234-5678-90abcdef0123" } },
+      id: { tb: "employees", id: { String: "5" } },
       name: { first_name: "David", last_name: "Brown" },
       email: "david.brown@example.com",
       role: "User",
     },
     {
-      id: { tb: "employees", id: { String: "f6a7b8c9-d0e1-2345-6789-0abcdef01234" } },
+      id: { tb: "employees", id: { String: "6" } },
       name: { first_name: "Mary", last_name: "Miller" },
       email: "mary.miller@example.com",
       role: "User",
     },
     {
-      id: { tb: "employees", id: { String: "a7b8c9d0-e1f2-3456-7890-abcdef012345" } },
+      id: { tb: "employees", id: { String: "7" } },
       name: { first_name: "Michael", last_name: "Davis" },
       email: "michael.davis@example.com",
       role: "Admin",
     },
     {
-      id: { tb: "employees", id: { String: "b8c9d0e1-f2a3-4567-8901-bcdef0123456" } },
+      id: { tb: "employees", id: { String: "8" } },
       name: { first_name: "Jennifer", last_name: "Garcia" },
       email: "jennifer.garcia@example.com",
       role: "User",
     },
     {
-      id: { tb: "employees", id: { String: "c9d0e1f2-a3b4-5678-9012-cdef01234567" } },
+      id: { tb: "employees", id: { String: "9" } },
       name: { first_name: "William", last_name: "Rodriguez" },
       email: "william.rodriguez@example.com",
       role: "Viewer",
     },
     {
-      id: { tb: "employees", id: { String: "d0e1f2a3-b4c5-6789-0123-def012345678" } },
+      id: { tb: "employees", id: { String: "10" } },
       name: { first_name: "Linda", last_name: "Martinez" },
       email: "linda.martinez@example.com",
       role: "User",
     },
     {
-      id: { tb: "employees", id: { String: "e1f2a3b4-c5d6-7890-1234-ef0123456789" } },
+      id: { tb: "employees", id: { String: "11" } },
       name: { first_name: "Richard", last_name: "Hernandez" },
       email: "richard.hernandez@example.com",
       role: "User",
     },
     {
-      id: { tb: "employees", id: { String: "f2a3b4c5-d6e7-8901-2345-f01234567890" } },
+      id: { tb: "employees", id: { String: "12" } },
       name: { first_name: "Karen", last_name: "Lopez" },
       email: "karen.lopez@example.com",
       role: "Admin",
     },
     {
-      id: { tb: "employees", id: { String: "a3b4c5d6-e7f8-9012-3456-01234567890a" } },
+      id: { tb: "employees", id: { String: "13" } },
       name: { first_name: "Joseph", last_name: "Gonzalez" },
       email: "joseph.gonzalez@example.com",
       role: "User",
     },
     {
-      id: { tb: "employees", id: { String: "b4c5d6e7-f8a9-0123-4567-1234567890ab" } },
+      id: { tb: "employees", id: { String: "14" } },
       name: { first_name: "Jessica", last_name: "Perez" },
       email: "jessica.perez@example.com",
       role: "Viewer",
@@ -100,6 +100,7 @@ export default function Employees() {
   ]);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const addEmployeeModalRef = useRef<ModalHandle>(null);
   const editEmployeeModalRef = useRef<ModalHandle>(null);
   const deletingEmployeeModalRef = useRef<ConfirmModalHandle>(null);
@@ -163,10 +164,26 @@ export default function Employees() {
     });
   };
 
+  const onSearchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  }
+
+  const filteredEmployeesData = employeesData.filter((employee) => {
+    if (searchTerm === ""){
+      return true;
+    }
+
+    const fullName = `${employee.name.first_name} ${employee.name.last_name}`;
+    const email = employee.email;
+
+    return fullName.includes(searchTerm) || email.includes(searchTerm)
+  })
+
   return (
-    <section className="border-4 rounded-4xl border-border-default bg-surface-700">
+    <section className="border-4 rounded-4xl border-border-default bg-surface-700 overflow-hidden">
       <article>
         <Header
+          onChange={onSearchInputChange}
           button={
             <Button
               size="medium"
@@ -183,7 +200,7 @@ export default function Employees() {
       <article>
         <Table
           tableName="Employees"
-          tableData={employeesData}
+          tableData={filteredEmployeesData}
           onEditClick={handleOpenEditEmployeeModal}
           onDeleteClick={handleOpenDeletionModal}
         />

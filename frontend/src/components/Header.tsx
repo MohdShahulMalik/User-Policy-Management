@@ -1,3 +1,4 @@
+import type { ChangeEvent } from 'react';
 import Button from './Button';
 import SearchInput from './SearchInput';
 import clsx from 'clsx';
@@ -6,6 +7,7 @@ interface HeaderProps {
   children?: React.ReactNode;
   button: React.ReactNode;
   className?: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 export default function Header(props: HeaderProps) {
@@ -16,7 +18,7 @@ export default function Header(props: HeaderProps) {
         {props.children}
       </h1>
       <div className="flex gap-5 w-[30%] justify-end">
-        <SearchInput/>
+        <SearchInput onChange = {props.onChange}/>
         {props.button}
       </div>
     </header>
