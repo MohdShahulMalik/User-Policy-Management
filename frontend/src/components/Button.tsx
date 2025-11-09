@@ -8,6 +8,7 @@ interface ButtonProps {
   onClick?: MouseEventHandler<HTMLButtonElement>;
   type?: "submit" | "button" | "reset";
   size: "small" | "medium";
+  formNoValidate?: boolean;
 }
 
 export default function Button(props: ButtonProps) {
@@ -26,6 +27,7 @@ export default function Button(props: ButtonProps) {
       )}
       formMethod={props.formMethod}
       onClick={props.onClick}
+      formNoValidate={props.formNoValidate}
     >
       {props.text}
     </button>

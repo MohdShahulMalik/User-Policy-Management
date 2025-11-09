@@ -11,7 +11,7 @@ interface TableProps {
 
 // Helper function to get nested property values
 function getNestedValue(obj: any, path: string) {
-  return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+  return path.split(".").reduce((acc, part) => acc && acc[part], obj);
 }
 
 interface HeaderConfig {
@@ -49,7 +49,10 @@ export default function Table(props: TableProps) {
       <caption>{props.tableName}</caption>
       <colgroup>
         {headers.map((header, index) => (
-          <col className={`${header.display.toLowerCase().replace(/\s/g, "-")}-col`} key={index} />
+          <col
+            className={`${header.display.toLowerCase().replace(/\s/g, "-")}-col`}
+            key={index}
+          />
         ))}
       </colgroup>
 
@@ -68,12 +71,22 @@ export default function Table(props: TableProps) {
               <td key={colIndex}>
                 {header.isAction ? (
                   <article>
-                    <Button text="Edit" size="small" onClick={() => props.onEditClick(rowIndex)}/>
-                    <Button text="Delete" size="small" onClick={() => props.onDeleteClick(rowIndex)}/>
+                    <Button
+                      text="Edit"
+                      size="small"
+                      onClick={() => props.onEditClick(rowIndex)}
+                    />
+                    <Button
+                      text="Delete"
+                      size="small"
+                      onClick={() => props.onDeleteClick(rowIndex)}
+                    />
                   </article>
                 ) : header.dataKey ? (
                   Array.isArray(header.dataKey) ? (
-                    header.dataKey.map(key => getNestedValue(row, key)).join(" ")
+                    header.dataKey
+                      .map((key) => getNestedValue(row, key))
+                      .join(" ")
                   ) : (
                     getNestedValue(row, header.dataKey)
                   )

@@ -43,6 +43,7 @@ const Modal = forwardRef<ModalHandle, ModalProps>((props, ref) => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     props.onClick(formData);
+    setFormData({});
     dialogRef.current?.close();
   };
 
@@ -54,10 +55,13 @@ const Modal = forwardRef<ModalHandle, ModalProps>((props, ref) => {
   };
 
   const renderField = (field: FormFields, index: number) => {
+    const inputClasses = "w-full px-3 py-2 border border-border-default rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors";
+    
     switch (field.type) {
       case "select":
         return (
           <select
+            className={clsx(inputClasses, "bg-surface-700 cursor-pointer appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEgMUw2IDZMMTEgMSIgc3Ryb2tlPSIjNjY2IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==')] bg-[length:12px] bg-[right_1.125rem_center] bg-no-repeat pr-10")}
             value={formData[index] || ""}
             onChange={(e) => handleChange(index, e.target.value)}
             required
@@ -73,6 +77,7 @@ const Modal = forwardRef<ModalHandle, ModalProps>((props, ref) => {
       default:
         return (
           <input
+            className={inputClasses}
             type={field.type}
             value={formData[index] || ""}
             onChange={(e) => handleChange(index, e.target.value)}
@@ -83,25 +88,37 @@ const Modal = forwardRef<ModalHandle, ModalProps>((props, ref) => {
   };
 
   return (
-    <dialog className={clsx(clientClassName,
-    "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0")} ref={dialogRef}>
-      <h2>{props.heading}</h2>
-      <form>
+    <dialog
+      className={clsx(
+        clientClassName,
+        "fixed top-1/2 left-1/2 m-0 max-h-[80vh] w-100 -translate-x-1/2 -translate-y-1/2 overflow-auto rounded-lg p-6",
+      )}
+      ref={dialogRef}
+    >
+      <h1 className="font-bold text-[1.25rem]">{props.heading}</h1>
+      <hr className="my-4"/>
+      <form className="grid gap-3" onSubmit={handleSubmit}>
         {props.config.map((field: FormFields, index: number) => (
-          <div key={index}>
+          <div className = "grid gap-1" key={index}>
             <label>{field.label}</label>
             {renderField(field, index)}
           </div>
         ))}
-        <Button
-          text={buttonText}
-          size="medium"
-          type="submit"
-          onClick={handleSubmit}
-        />
-        <Button size="medium" text="Cancel" type="submit" formMethod="dialog" />
+        <article className="flex gap-2">
+          <Button
+            text={buttonText}
+            size="medium"
+            type="submit"
+          />
+          <Button
+            size="medium"
+            text="Cancel"
+            type="button"
+            formNoValidate
+            onClick={() => dialogRef.current?.close()}
+          />
+        </article>
       </form>
-      <pre>{JSON.stringify(formData, null, 2)}</pre>
     </dialog>
   );
 });
@@ -112,37 +129,51 @@ export interface ConfirmModalHandle {
 
 interface ConfirmModalProps {
   onConfirm: () => void;
-  heading: "Employee" | "Policy"
+  heading: "Employee" | "Policy";
 }
 
-const ConfirmModal = forwardRef<ConfirmModalHandle, ConfirmModalProps>((props, ref) => {
+const ConfirmModal = forwardRef<ConfirmModalHandle, ConfirmModalProps>(
+  (props, ref) => {
     const dialogRef = useRef<HTMLDialogElement>(null);
 
     useImperativeHandle(ref, () => ({
       open: () => {
         dialogRef.current?.showModal();
-      }
-    }))
+      },
+    }));
 
-    const handleConfirm = () => {
+    const handleConfirm = (e: FormEvent) => {
+      e.preventDefault();
       props.onConfirm();
       dialogRef.current?.close();
-    }
+    };
 
     return (
-      <dialog ref={dialogRef}>
-        <form>
-          <h1>Delete {props.heading}</h1>
+      <dialog
+        className="fixed top-1/2 left-1/2 m-0 w-96 -translate-x-1/2 -translate-y-1/2 rounded-lg p-6"
+        ref={dialogRef}
+      >
+        <h1 className="font-bold text-[1.25rem]">Delete {props.heading}</h1>
+        <form className="grid gap-4" onSubmit={handleConfirm}>
           <p>This action cannot be undone</p>
-          <article>
-            <Button text="Cancel" size="medium" formMethod="dialog" type="submit" />
-            <Button text="Delete" size="medium" onClick={handleConfirm} type="submit" />
+          <article className="flex gap-2">
+            <Button
+              text="Cancel"
+              size="medium"
+              type="button"
+              onClick={() => dialogRef.current?.close()}
+            />
+            <Button
+              text="Delete"
+              size="medium"
+              type="submit"
+            />
           </article>
         </form>
       </dialog>
-    )
-  
-})
+    );
+  },
+);
 
 export default Modal;
 export { ConfirmModal };
