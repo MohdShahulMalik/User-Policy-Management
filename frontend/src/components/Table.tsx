@@ -33,8 +33,8 @@ function getHeaders(tableName: "Employees" | "Policies"): HeaderConfig[] {
   }
 
   return [
-    { display: "Id", dataKey: "id" },
-    { display: "Name", dataKey: ["name.first", "name.last"] },
+    { display: "Id", dataKey: "id.id.String" },
+    { display: "Name", dataKey: ["name.first_name", "name.last_name"] },
     { display: "Plan", dataKey: "plan" },
     { display: "Status", dataKey: "status" },
     { display: "Effective Date", dataKey: "effective_date" },
@@ -72,13 +72,14 @@ export default function Table(props: TableProps) {
             {headers.map((header, colIndex) => (
               <td key={colIndex} className="px-4 py-2">
                 {header.isAction ? (
-                  <article className="flex gap-0.5">
+                  <article className="flex gap-1">
                     <Button
                       text="Edit"
                       size="small"
                       onClick={() => props.onEditClick(rowIndex)}
                     />
                     <Button
+                      className="bg-danger text-white hover:bg-danger-hover"
                       text="Delete"
                       size="small"
                       onClick={() => props.onDeleteClick(rowIndex)}

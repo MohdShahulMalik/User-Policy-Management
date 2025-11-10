@@ -53,7 +53,7 @@ export default function Dashboard() {
       <div className={clsx("flex gap-4")}>
         <div
           className={clsx(
-            "flex h-[30svh] w-[35svw] content-center items-center justify-center gap-4 rounded-4xl border-4 border-surface-700 border-t-accent bg-surface-700 text-2xl",
+            "flex h-[30svh] w-[35svw] content-center items-center justify-center gap-4 rounded-4xl border-t-4 border-surface-700 border-t-accent bg-surface-700 text-2xl",
             styles["cool-shadow"],
             styles["gradient"],
           )}

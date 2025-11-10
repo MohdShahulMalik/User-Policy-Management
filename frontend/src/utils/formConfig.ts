@@ -8,9 +8,9 @@ export const employeeFormConfig = [
 ];
 
 export const policyFormConfig: FormFields[] = [
-  {label: "First Name", type: "text"},
-  {label: "Last Name", type: "text"},
-  {label: "Plan", type: "text"},
-  {label: "Status", type: "select", options: ["Pending", "Active", "Expired"]},
-  {label: "Effective Date", type: "text"}
+  { name: "name.first_name", label: "First Name", type: "text" },
+  { name: "name.last_name", label: "Last Name", type: "text" },
+  { name: "plan", label: "Plan", type: "text" },
+  { name: "status", label: "Status", type: "select", options: ["Pending", "Active", "Expired"] },
+  { name: "effective_date", label: "Effective Date", type: "date" },
 ];

@@ -74,10 +74,20 @@ const Modal = forwardRef<ModalHandle, ModalProps>((props, ref) => {
             ))}
           </select>
         );
+      case "date":
+        return (
+          <input
+            className={clsx(inputClasses, "bg-surface-700 cursor-pointer")}
+            type="date"
+            value={formData[index] || ""}
+            onChange={(e) => handleChange(index, e.target.value)}
+            required
+          />
+        );
       default:
         return (
           <input
-            className={inputClasses}
+            className={clsx(inputClasses, "bg-surface-700")}
             type={field.type}
             value={formData[index] || ""}
             onChange={(e) => handleChange(index, e.target.value)}
