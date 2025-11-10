@@ -1,4 +1,5 @@
 import { useRef, useState, type ChangeEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import Modal, {
   type ModalHandle,
   ConfirmModal,
@@ -12,6 +13,7 @@ import { v4 as uuidv4 } from "uuid";
 import type { Employees } from "../types/tables";
 
 export default function Employees() {
+  const navigate = useNavigate();
   const [employeesData, setEmployeesData] = useState<Employees[]>([
     {
       id: { tb: "employees", id: { String: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d" } },
@@ -173,6 +175,11 @@ export default function Employees() {
     setRoleFilter(e.target.value);
   };
 
+  const handleViewPolicies = (index: number) => {
+    const employee = employeesData[index];
+    navigate(`/policies?userId=${employee.id.id.String}`);
+  };
+
   const filteredEmployeesData = employeesData.filter((employee) => {
     const searchMatch =
       searchTerm === "" ||
@@ -215,6 +222,7 @@ export default function Employees() {
           tableData={filteredEmployeesData}
           onEditClick={handleOpenEditEmployeeModal}
           onDeleteClick={handleOpenDeletionModal}
+          onViewPoliciesClick={handleViewPolicies}
         />
       </article>
       <Modal

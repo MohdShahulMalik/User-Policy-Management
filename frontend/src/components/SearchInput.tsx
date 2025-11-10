@@ -1,5 +1,5 @@
-import clsx from 'clsx';
-import type { ChangeEvent } from 'react';
+import clsx from "clsx";
+import type { ChangeEvent } from "react";
 
 interface SearchInputProps {
   className?: string;
@@ -14,7 +14,7 @@ export default function SearchInput(props: SearchInputProps) {
       <input
         type="text"
         placeholder={`Search ${props.subject}...`}
-        className="h-12 text-[1.125rem] text-center border-3 border-border-2 rounded-md focus:outline-none focus:ring-3 focus:ring-focus-ring focus:border-transparent transition-colors"
+        className="h-12 rounded-3xl border-3 border-border-2 text-center text-[1.125rem] transition-colors focus:border-transparent focus:ring-3 focus:ring-focus-ring focus:outline-none"
         onChange={props.onChange}
       />
     </div>

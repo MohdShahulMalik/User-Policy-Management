@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import type { Employees, Policies } from "../types/tables";
 import Button from "./Button";
+import { Link } from "react-router-dom";
 
 interface TableProps {
   className?: string;
@@ -8,6 +9,7 @@ interface TableProps {
   tableName: "Employees" | "Policies";
   onEditClick: (index: number) => void;
   onDeleteClick: (index: number) => void;
+  onViewPoliciesClick?: (index: number) => void;
 }
 
 // Helper function to get nested property values
@@ -84,6 +86,13 @@ export default function Table(props: TableProps) {
                       size="small"
                       onClick={() => props.onDeleteClick(rowIndex)}
                     />
+                    {props.tableName === "Employees" && props.onViewPoliciesClick && (
+                      <Button
+                        text="View Policies"
+                        size="small"
+                        onClick={() => props.onViewPoliciesClick?.(rowIndex)}
+                      />
+                    )}
                   </article>
                 ) : header.dataKey ? (
                   Array.isArray(header.dataKey) ? (
