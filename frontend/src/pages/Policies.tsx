@@ -100,6 +100,7 @@ export default function Policies() {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
   const addPolicyModalRef = useRef<ModalHandle>(null);
   const editPolicyModalRef = useRef<ModalHandle>(null);
   const deletingPolicyModalRef = useRef<ConfirmModalHandle>(null);
@@ -170,26 +171,29 @@ export default function Policies() {
     setSearchTerm(e.target.value);
   };
 
+  const onStatusFilterChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setStatusFilter(e.target.value);
+  };
+
   const filteredPoliciesData = policiesData.filter((policy) => {
-    if (searchTerm === "") {
-      return true;
-    }
+    const searchMatch =
+      searchTerm === "" ||
+      `${policy.name.first_name} ${policy.name.last_name}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      policy.plan.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      policy.status.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const fullName = `${policy.name.first_name} ${policy.name.last_name}`;
-    const plan = policy.plan;
-    const status = policy.status;
+    const statusMatch = statusFilter === "" || policy.status === statusFilter;
 
-    return (
-      fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      plan.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      status.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    return searchMatch && statusMatch;
   });
 
   return (
     <section className="overflow-hidden rounded-4xl border-4 border-border-default bg-surface-700">
       <article>
         <Header
+          subject="Policy"
           onChange={onSearchInputChange}
           button={
             <Button
@@ -199,6 +203,10 @@ export default function Policies() {
               className="h-[70%] w-[25%]"
             />
           }
+          dropdownOptions={["Active", "Pending", "Expired"]}
+          dropdownValue={statusFilter}
+          onDropdownChange={onStatusFilterChange}
+          dropdownPlaceholder="Filter by Status"
         >
           Policies
         </Header>

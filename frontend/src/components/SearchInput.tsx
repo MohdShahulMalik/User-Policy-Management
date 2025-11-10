@@ -4,6 +4,7 @@ import type { ChangeEvent } from 'react';
 interface SearchInputProps {
   className?: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  subject: "Employee" | "Policy";
 }
 
 export default function SearchInput(props: SearchInputProps) {
@@ -12,7 +13,7 @@ export default function SearchInput(props: SearchInputProps) {
     <div className={clsx("search-input-container", clientClassName)}>
       <input
         type="text"
-        placeholder="Search Employee..."
+        placeholder={`Search ${props.subject}...`}
         className="h-12 text-[1.125rem] text-center border-3 border-border-2 rounded-md focus:outline-none focus:ring-3 focus:ring-focus-ring focus:border-transparent transition-colors"
         onChange={props.onChange}
       />
