@@ -4,6 +4,7 @@ export interface Name {
 }
 
 export interface FormFields {
+  name: string,
   label: string,
   type: string,
   options?: string[],

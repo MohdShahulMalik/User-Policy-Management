@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import type { Employees, Policies } from "../types/tables";
 import Button from "./Button";
-import { Link } from "react-router-dom";
 
 interface TableProps {
   className?: string;

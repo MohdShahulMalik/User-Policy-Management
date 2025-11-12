@@ -135,8 +135,8 @@ export default function Policies() {
         last_name: formData["1"],
       },
       plan: formData["2"],
-      status: formData["3"],
-      effective_date: formData["4"],
+      status: formData["4"],
+      effective_date: formData["5"],
       employeeId: { tb: "employees", id: { String: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d" } }, // Dummy employeeId
     };
     setPoliciesData((prev) => [...prev, newRecord]);
