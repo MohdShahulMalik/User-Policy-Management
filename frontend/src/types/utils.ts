@@ -8,6 +8,7 @@ export interface FormFields {
   label: string,
   type: string,
   options?: string[],
+  disabled?: boolean,
 };
 
 export interface RecordId {

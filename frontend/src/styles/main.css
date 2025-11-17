@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
+
 
 @theme {
   /* Light mode - Background colors (lightest to darkest) */
@@ -21,8 +21,8 @@
   --color-border-2: oklch(0.5 0.1 240);
   
   /* Semantic/state colors (same for both modes) */
-  --color-primary: oklch(0.4 0.2 266);
-  --color-secondary: oklch(0.4 0.2 86);
+  --color-primary: #93c5fd;
+  --color-secondary: #60a5fa;
   --color-danger: oklch(0.5 0.05 30);
   --color-danger-hover: oklch(0.4 0.05 30);
   --color-warning: oklch(0.5 0.2 100);
@@ -33,24 +33,25 @@
 
 /* Dark mode overrides */
 @layer theme {
-  @variant dark {
-    --color-surface-900: oklch(0.1 0.1 266);
-    --color-surface-800: oklch(0.15 0.1 266);
-    --color-surface-700: oklch(0.2 0.1 266);
-    --color-foreground: oklch(0.96 0.1 266);
-    --color-foreground-muted: oklch(0.76 0.1 266);
-    --color-accent: oklch(0.5 0.2 266);
-    --color-border-default: oklch(0.4 0.2 266);
-    --color-border-muted: oklch(0.3 0.2 266);
-    --color-border-2: oklch(0.4 0.1 240);
-    --color-primary: oklch(0.76 0.2 266);
-    --color-secondary: oklch(0.76 0.2 86);
-    --color-danger: oklch(0.7 0.2 30);
-    --color-danger-hover: oklch(0.8 0.2 30);
-    --color-warning: oklch(0.7 0.2 100);
-    --color-success: oklch(0.7 0.2 160);
-    --color-info: oklch(0.5 0.2 260);
-    --color-focus-ring: oklch(0.7 0.2 240);
+  :root, :host {
+    @variant dark {
+      --color-surface-900: oklch(0.1 0.1 266);
+      --color-surface-800: oklch(0.15 0.1 266);
+      --color-surface-700: oklch(0.2 0.1 266);
+      --color-foreground: oklch(0.96 0.1 266);
+      --color-foreground-muted: oklch(0.76 0.1 266);
+      --color-accent: oklch(0.5 0.2 266);
+      --color-border-default: oklch(0.4 0.2 266);
+      --color-border-muted: oklch(0.3 0.2 266);
+      --color-border-2: oklch(0.4 0.1 240);
+      --color-primary: #1d4ed8;
+      --color-secondary: #2563eb;
+
+      --color-warning: oklch(0.7 0.2 100);
+      --color-success: oklch(0.7 0.2 160);
+      --color-info: oklch(0.5 0.2 260);
+      --color-focus-ring: oklch(0.7 0.2 240);
+    }
   }
 }
 
@@ -61,7 +62,7 @@
 }
 
 html, body {
-  background-color: var(--surface-900);
+  background-color: var(--color-surface-900);
   padding-top: 7rem;
   /* background: radial-gradient(ellipse at 50% 30%, var(--surface-700) 0%, var(--surface-800) 45%, var(--surface-900) 100%) !important; */
 }

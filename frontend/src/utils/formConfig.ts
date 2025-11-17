@@ -15,8 +15,8 @@ export const employeeFormConfig: FormFields[] = [
 export const policyFormConfig: FormFields[] = [
   { name: "name.first_name", label: "First Name", type: "text" },
   { name: "name.last_name", label: "Last Name", type: "text" },
-  { name: "plan", label: "Plan", type: "text" },
   { name: "employee_id", label: "Employee Id", type: "text" },
+  { name: "plan", label: "Plan", type: "text" },
   {
     name: "status",
     label: "Status",

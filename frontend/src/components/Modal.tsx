@@ -19,6 +19,7 @@ interface ModalProps {
     | "Edit Policies";
   onClick: (formData: Record<string, string>) => void;
   initialData?: Record<string, string>;
+  disabled?: boolean,
 }
 
 export interface ModalHandle {
@@ -85,6 +86,20 @@ const Modal = forwardRef<ModalHandle, ModalProps>((props, ref) => {
           />
         );
       default:
+        
+        if (props.disabled && index < 3) {
+          return (
+            <input
+              className={clsx(inputClasses, "bg-surface-800")}
+              type={field.type}
+              value={formData[index] || ""}
+              onChange={(e) => handleChange(index, e.target.value)}
+              required
+              disabled
+            />
+          );
+        }
+
         return (
           <input
             className={clsx(inputClasses, "bg-surface-700")}

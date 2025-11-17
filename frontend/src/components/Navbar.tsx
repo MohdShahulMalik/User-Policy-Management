@@ -6,7 +6,7 @@ export default function Navbar() {
   return (
     <nav
       className={clsx(
-        "fixed top-14 left-[7.5%] flex w-[85%] justify-between rounded-4xl border-2 border-blue-200 bg-transparent p-6 text-[1.175rem] text-blue-950 shadow-2xl backdrop-blur-3xl",
+        "fixed top-14 left-[7.5%] flex w-[85%] justify-between rounded-4xl border-2 border-blue-200 bg-transparent p-6 text-[1.175rem] text-blue-950 shadow-2xl backdrop-blur-3xl text-foreground",
         styles["main-nav"],
       )}
     >

@@ -11,10 +11,12 @@ import Header from "../components/Header";
 import Table from "../components/Table";
 import { v4 as uuidv4 } from "uuid";
 import type { Policies } from "../types/tables";
+import type { Employees } from "../types/tables"
 
 interface PoliciesProps {
   policiesData: Policies[];
   setPoliciesData: Dispatch<SetStateAction<Policies[]>>;
+  employeesData: Employees[];
 }
 
 export default function Policies(props: PoliciesProps) {
@@ -43,7 +45,7 @@ export default function Policies(props: PoliciesProps) {
         first_name: formData["0"],
         last_name: formData["1"],
       },
-      employeeId: { tb: "employees", id: { String: formData["2"] } }, // Dummy employeeId
+      employeeId: { tb: "employees", id: { String: formData["2"] } },
       plan: formData["3"],
       status: formData["4"],
       effective_date: formData["5"],
@@ -67,7 +69,19 @@ export default function Policies(props: PoliciesProps) {
   };
 
   const handleOpenAddPolicyModal = () => {
+    if (userId) {
+      const employee = props.employeesData.find(
+        (e) => e.id.id.String === userId,
+      );
+      const initialData = {
+        "0": employee?.name.first_name || "",
+        "1": employee?.name.last_name || "",
+        "2": userId,
+      };
+      addPolicyModalRef.current?.open(initialData);
+    } else {
       addPolicyModalRef.current?.open();
+    }
   };
 
   const handleOpenEditPolicyModal = (index: number) => {
@@ -155,12 +169,14 @@ export default function Policies(props: PoliciesProps) {
         ref={addPolicyModalRef}
         config={policyFormConfig}
         onClick={handleAddingPolicies}
+        disabled
       />
       <Modal
         heading="Edit Policies"
         config={policyFormConfig}
         ref={editPolicyModalRef}
         onClick={handleEditingPolicy}
+        disabled
       />
       <ConfirmModal
         ref={deletingPolicyModalRef}

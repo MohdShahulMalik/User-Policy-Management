@@ -22,7 +22,7 @@ export default function Header(props: HeaderProps) {
       className={clsx(
         "app-header",
         clientClassName,
-        "flex h-[13svh] w-[90svw] items-center justify-between px-6 py-4",
+        "flex h-[13svh] w-[90svw] items-center justify-between px-6 py-4 text-foreground",
       )}
     >
       <h1 className="text-3xl font-bold">{props.children}</h1>

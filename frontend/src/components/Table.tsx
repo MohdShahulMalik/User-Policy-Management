@@ -47,7 +47,7 @@ export default function Table(props: TableProps) {
   const headers = getHeaders(props.tableName);
 
   return (
-    <table className={clsx(props.className, "w-[90svw] rounded-2xl")}>
+    <table className={clsx(props.className, "w-[90svw] rounded-2xl text-foreground")}>
       <colgroup>
         {headers.map((header, index) => (
           <col
@@ -67,7 +67,7 @@ export default function Table(props: TableProps) {
         </tr>
       </thead>
 
-      <tbody>
+      <tbody className="text-foreground-muted">
         {props.tableData.map((row, rowIndex) => (
           <tr className="border-b" key={getNestedValue(row, "id") || rowIndex}>
             {headers.map((header, colIndex) => (
@@ -79,12 +79,6 @@ export default function Table(props: TableProps) {
                       size="small"
                       onClick={() => props.onEditClick(rowIndex)}
                     />
-                    <Button
-                      className="bg-danger text-white hover:bg-danger-hover"
-                      text="Delete"
-                      size="small"
-                      onClick={() => props.onDeleteClick(rowIndex)}
-                    />
                     {props.tableName === "Employees" && props.onViewPoliciesClick && (
                       <Button
                         text="View Policies"
@@ -92,6 +86,12 @@ export default function Table(props: TableProps) {
                         onClick={() => props.onViewPoliciesClick?.(rowIndex)}
                       />
                     )}
+                    <Button
+                      danger
+                      text="Delete"
+                      size="small"
+                      onClick={() => props.onDeleteClick(rowIndex)}
+                    />
                   </article>
                 ) : header.dataKey ? (
                   Array.isArray(header.dataKey) ? (
