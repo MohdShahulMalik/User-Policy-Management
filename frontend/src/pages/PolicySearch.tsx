@@ -1,5 +1,10 @@
 import { useSearchParams } from "react-router-dom";
-import { useRef, useState, type ChangeEvent, type Dispatch, type SetStateAction } from "react";
+import {
+  useRef,
+  useState,
+  type ChangeEvent,
+  useContext,
+} from "react";
 import Modal, {
   type ModalHandle,
   ConfirmModal,
@@ -10,21 +15,20 @@ import { policyFormConfig } from "../utils/formConfig";
 import Header from "../components/Header";
 import Table from "../components/Table";
 import { v4 as uuidv4 } from "uuid";
-import type { Policies } from "../types/tables";
-import type { Employees } from "../types/tables"
+import type { Policies as PolicyInfo } from "../types/tables";
+import { AppContext } from "../App";
 
-interface PoliciesProps {
-  policiesData: Policies[];
-  setPoliciesData: Dispatch<SetStateAction<Policies[]>>;
-  employeesData: Employees[];
-}
-
-export default function Policies(props: PoliciesProps) {
+export default function Policies() {
   const [searchParams] = useSearchParams();
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error("useContext must be used within an AppContext.Provider");
+  }
+
+  const { policies, setPolicies, employees } = context;
+
   const userId = searchParams.get("userId");
 
-  const policiesData = props.policiesData;
-  const setPoliciesData = props.setPoliciesData;
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -34,7 +38,7 @@ export default function Policies(props: PoliciesProps) {
   const deletingPolicyModalRef = useRef<ConfirmModalHandle>(null);
 
   const handleAddingPolicies = (formData: Record<string, string>) => {
-    const newRecord: Policies = {
+    const newRecord: PolicyInfo = {
       id: {
         tb: "policies",
         id: {
@@ -50,13 +54,13 @@ export default function Policies(props: PoliciesProps) {
       status: formData["4"],
       effective_date: formData["5"],
     };
-    setPoliciesData((prev) => [...prev, newRecord]);
+    setPolicies((prev) => [...prev, newRecord]);
   };
 
   const handleEditingPolicy = (formData: Record<string, string>) => {
     if (editingIndex === null) return;
 
-    setPoliciesData((prev) => {
+    setPolicies((prev) => {
       prev[editingIndex].name = {
         first_name: formData["0"],
         last_name: formData["1"],
@@ -70,7 +74,7 @@ export default function Policies(props: PoliciesProps) {
 
   const handleOpenAddPolicyModal = () => {
     if (userId) {
-      const employee = props.employeesData.find(
+      const employee = employees.find(
         (e) => e.id.id.String === userId,
       );
       const initialData = {
@@ -86,7 +90,7 @@ export default function Policies(props: PoliciesProps) {
 
   const handleOpenEditPolicyModal = (index: number) => {
     setEditingIndex(index);
-    const policy = policiesData[index];
+    const policy = policies[index];
     const initialData = {
       "0": policy.name.first_name,
       "1": policy.name.last_name,
@@ -104,7 +108,7 @@ export default function Policies(props: PoliciesProps) {
   };
 
   const handleDeletion = () => {
-    setPoliciesData((prev) => {
+    setPolicies((prev) => {
       return prev.filter((_, i) => i !== deletingIndex);
     });
   };
@@ -117,7 +121,7 @@ export default function Policies(props: PoliciesProps) {
     setStatusFilter(e.target.value);
   };
 
-  const filteredPoliciesData = policiesData.filter((policy) => {
+  const filteredPoliciesData = policies.filter((policy) => {
     const searchMatch =
       searchTerm === "" ||
       `${policy.name.first_name} ${policy.name.last_name}`

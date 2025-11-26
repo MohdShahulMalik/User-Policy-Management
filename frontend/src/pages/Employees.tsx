@@ -1,4 +1,4 @@
-import { useRef, useState, type ChangeEvent, type Dispatch, type SetStateAction } from "react";
+import { useContext, useRef, useState, type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import Modal, {
   type ModalHandle,
@@ -10,17 +10,19 @@ import { employeeFormConfig } from "../utils/formConfig";
 import Header from "../components/Header";
 import Table from "../components/Table";
 import { v4 as uuidv4 } from "uuid";
-import type { Employees } from "../types/tables";
+import type { Employees as EmployeeInfo } from "../types/tables";
+import { AppContext } from "../App";
 
-interface EmployeesProps {
-  employeesData: Employees[];
-  setEmployeesData: Dispatch<SetStateAction<Employees[]>>; 
-}
-
-export default function Employees(props: EmployeesProps) {
+export default function Employees() {
   const navigate = useNavigate();
-  const employeesData = props.employeesData;
-  const setEmployeesData = props.setEmployeesData;
+  const context = useContext(AppContext);
+
+  if (!context) {
+    throw new Error("useContext must be used within an AppContext.Provider");
+  }
+
+  const { employees, setEmployees } = context;
+
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -30,7 +32,7 @@ export default function Employees(props: EmployeesProps) {
   const deletingEmployeeModalRef = useRef<ConfirmModalHandle>(null);
 
   const handleAddingEmployees = (formData: Record<string, string>) => {
-    const newRecord: Employees = {
+    const newRecord: EmployeeInfo = {
       id: {
         tb: "employees",
         id: {
@@ -44,13 +46,13 @@ export default function Employees(props: EmployeesProps) {
       email: formData["2"],
       role: formData["3"],
     };
-    setEmployeesData((prev) => [...prev, newRecord]);
+    setEmployees((prev) => [...prev, newRecord]);
   };
 
   const handleEditingEmployee = (formData: Record<string, string>) => {
     if (editingIndex === null) return;
 
-    setEmployeesData((prev) => {
+    setEmployees((prev) => {
       prev[editingIndex].name = {
         first_name: formData["0"],
         last_name: formData["1"],
@@ -67,7 +69,7 @@ export default function Employees(props: EmployeesProps) {
 
   const handleOpenEditEmployeeModal = (index: number) => {
     setEditingIndex(index);
-    const employee = employeesData[index];
+    const employee = employees[index];
     const initialData = {
       "0": employee.name.first_name,
       "1": employee.name.last_name,
@@ -83,7 +85,7 @@ export default function Employees(props: EmployeesProps) {
   };
 
   const handleDeletion = () => {
-    setEmployeesData((prev) => {
+    setEmployees((prev) => {
       return prev.filter((_, i) => i !== deletingIndex);
     });
   };
@@ -97,11 +99,11 @@ export default function Employees(props: EmployeesProps) {
   };
 
   const handleViewPolicies = (index: number) => {
-    const employee = employeesData[index];
+    const employee = employees[index];
     navigate(`/policy-search?userId=${employee.id.id.String}`);
   };
 
-  const filteredEmployeesData = employeesData.filter((employee) => {
+  const filteredEmployeesData = employees.filter((employee) => {
     const searchMatch =
       searchTerm === "" ||
       `${employee.name.first_name} ${employee.name.last_name}`
