@@ -1,4 +1,4 @@
-import { useRef, useState, type ChangeEvent } from "react";
+import { useRef, useState, type ChangeEvent, type Dispatch, type SetStateAction } from "react";
 import { useNavigate } from "react-router-dom";
 import Modal, {
   type ModalHandle,
@@ -10,14 +10,17 @@ import { employeeFormConfig } from "../utils/formConfig";
 import Header from "../components/Header";
 import Table from "../components/Table";
 import { v4 as uuidv4 } from "uuid";
-import type { Employees as EmployeesType } from "../types/tables";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { addEmployee, updateEmployee, deleteEmployee } from "../store/employeesSlice";
+import type { Employees } from "../types/tables";
 
-export default function Employees() {
+interface EmployeesProps {
+  employeesData: Employees[];
+  setEmployeesData: Dispatch<SetStateAction<Employees[]>>; 
+}
+
+export default function Employees(props: EmployeesProps) {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const employeesData = useAppSelector((state) => state.employees.data);
+  const employeesData = props.employeesData;
+  const setEmployeesData = props.setEmployeesData;
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -27,7 +30,7 @@ export default function Employees() {
   const deletingEmployeeModalRef = useRef<ConfirmModalHandle>(null);
 
   const handleAddingEmployees = (formData: Record<string, string>) => {
-    const newRecord: EmployeesType = {
+    const newRecord: Employees = {
       id: {
         tb: "employees",
         id: {
@@ -41,22 +44,21 @@ export default function Employees() {
       email: formData["2"],
       role: formData["3"],
     };
-    dispatch(addEmployee(newRecord));
+    setEmployeesData((prev) => [...prev, newRecord]);
   };
 
   const handleEditingEmployee = (formData: Record<string, string>) => {
     if (editingIndex === null) return;
 
-    const updatedEmployee: EmployeesType = {
-      ...employeesData[editingIndex],
-      name: {
+    setEmployeesData((prev) => {
+      prev[editingIndex].name = {
         first_name: formData["0"],
         last_name: formData["1"],
-      },
-      email: formData["2"],
-      role: formData["3"],
-    };
-    dispatch(updateEmployee({ index: editingIndex, employee: updatedEmployee }));
+      };
+      prev[editingIndex].email = formData["2"];
+      prev[editingIndex].role = formData["3"];
+      return [...prev];
+    });
   };
 
   const handleOpenAddEmployeeModal = () => {
@@ -81,9 +83,9 @@ export default function Employees() {
   };
 
   const handleDeletion = () => {
-    if (deletingIndex !== null) {
-      dispatch(deleteEmployee(deletingIndex));
-    }
+    setEmployeesData((prev) => {
+      return prev.filter((_, i) => i !== deletingIndex);
+    });
   };
 
   const onSearchInputChange = (e: ChangeEvent<HTMLInputElement>) => {

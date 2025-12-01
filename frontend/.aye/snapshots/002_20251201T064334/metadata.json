@@ -1,0 +1,42 @@
+{
+  "timestamp": "20251201T064334",
+  "files": [
+    {
+      "original": "/home/maxum/projects/work/mix/Employee & Policy Management/frontend/src/store/store.ts",
+      "snapshot": "/home/maxum/projects/work/mix/Employee & Policy Management/frontend/.aye/snapshots/002_20251201T064334/store.ts"
+    },
+    {
+      "original": "/home/maxum/projects/work/mix/Employee & Policy Management/frontend/src/store/hooks.ts",
+      "snapshot": "/home/maxum/projects/work/mix/Employee & Policy Management/frontend/.aye/snapshots/002_20251201T064334/hooks.ts"
+    },
+    {
+      "original": "/home/maxum/projects/work/mix/Employee & Policy Management/frontend/src/store/employeesSlice.ts",
+      "snapshot": "/home/maxum/projects/work/mix/Employee & Policy Management/frontend/.aye/snapshots/002_20251201T064334/employeesSlice.ts"
+    },
+    {
+      "original": "/home/maxum/projects/work/mix/Employee & Policy Management/frontend/src/store/policiesSlice.ts",
+      "snapshot": "/home/maxum/projects/work/mix/Employee & Policy Management/frontend/.aye/snapshots/002_20251201T064334/policiesSlice.ts"
+    },
+    {
+      "original": "/home/maxum/projects/work/mix/Employee & Policy Management/frontend/src/main.tsx",
+      "snapshot": "/home/maxum/projects/work/mix/Employee & Policy Management/frontend/.aye/snapshots/002_20251201T064334/main.tsx"
+    },
+    {
+      "original": "/home/maxum/projects/work/mix/Employee & Policy Management/frontend/src/App.tsx",
+      "snapshot": "/home/maxum/projects/work/mix/Employee & Policy Management/frontend/.aye/snapshots/002_20251201T064334/App.tsx"
+    },
+    {
+      "original": "/home/maxum/projects/work/mix/Employee & Policy Management/frontend/src/pages/Employees.tsx",
+      "snapshot": "/home/maxum/projects/work/mix/Employee & Policy Management/frontend/.aye/snapshots/002_20251201T064334/Employees.tsx"
+    },
+    {
+      "original": "/home/maxum/projects/work/mix/Employee & Policy Management/frontend/src/pages/Policies.tsx",
+      "snapshot": "/home/maxum/projects/work/mix/Employee & Policy Management/frontend/.aye/snapshots/002_20251201T064334/Policies.tsx"
+    },
+    {
+      "original": "/home/maxum/projects/work/mix/Employee & Policy Management/frontend/src/pages/PolicySearch.tsx",
+      "snapshot": "/home/maxum/projects/work/mix/Employee & Policy Management/frontend/.aye/snapshots/002_20251201T064334/PolicySearch.tsx"
+    }
+  ],
+  "prompt": "make this project's global states in the App.tsx to work with redux please"
+}

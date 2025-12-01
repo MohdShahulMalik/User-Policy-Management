@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router-dom";
-import { useRef, useState, type ChangeEvent } from "react";
+import { useRef, useState, type ChangeEvent, type Dispatch, type SetStateAction } from "react";
 import Modal, {
   type ModalHandle,
   ConfirmModal,
@@ -11,16 +11,20 @@ import Header from "../components/Header";
 import Table from "../components/Table";
 import { v4 as uuidv4 } from "uuid";
 import type { Policies } from "../types/tables";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { addPolicy, updatePolicy, deletePolicy } from "../store/policiesSlice";
+import type { Employees } from "../types/tables"
 
-export default function PolicySearch() {
+interface PoliciesProps {
+  policiesData: Policies[];
+  setPoliciesData: Dispatch<SetStateAction<Policies[]>>;
+  employeesData: Employees[];
+}
+
+export default function Policies(props: PoliciesProps) {
   const [searchParams] = useSearchParams();
   const userId = searchParams.get("userId");
 
-  const dispatch = useAppDispatch();
-  const policiesData = useAppSelector((state) => state.policies.data);
-  const employeesData = useAppSelector((state) => state.employees.data);
+  const policiesData = props.policiesData;
+  const setPoliciesData = props.setPoliciesData;
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -46,28 +50,27 @@ export default function PolicySearch() {
       status: formData["4"],
       effective_date: formData["5"],
     };
-    dispatch(addPolicy(newRecord));
+    setPoliciesData((prev) => [...prev, newRecord]);
   };
 
   const handleEditingPolicy = (formData: Record<string, string>) => {
     if (editingIndex === null) return;
 
-    const updatedPolicy: Policies = {
-      ...policiesData[editingIndex],
-      name: {
+    setPoliciesData((prev) => {
+      prev[editingIndex].name = {
         first_name: formData["0"],
         last_name: formData["1"],
-      },
-      plan: formData["3"],
-      status: formData["4"],
-      effective_date: formData["5"],
-    };
-    dispatch(updatePolicy({ index: editingIndex, policy: updatedPolicy }));
+      };
+      prev[editingIndex].plan = formData["3"];
+      prev[editingIndex].status = formData["4"];
+      prev[editingIndex].effective_date = formData["5"];
+      return [...prev];
+    });
   };
 
   const handleOpenAddPolicyModal = () => {
     if (userId) {
-      const employee = employeesData.find(
+      const employee = props.employeesData.find(
         (e) => e.id.id.String === userId,
       );
       const initialData = {
@@ -101,9 +104,9 @@ export default function PolicySearch() {
   };
 
   const handleDeletion = () => {
-    if (deletingIndex !== null) {
-      dispatch(deletePolicy(deletingIndex));
-    }
+    setPoliciesData((prev) => {
+      return prev.filter((_, i) => i !== deletingIndex);
+    });
   };
 
   const onSearchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
