@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { type Employees } from '../types/tables';
 import { initialEmployeesData } from '../data/mockData';
 
