@@ -10,11 +10,13 @@ import { policyFormConfig } from "../utils/formConfig";
 import Header from "../components/Header";
 import Table from "../components/Table";
 import { v4 as uuidv4 } from "uuid";
-import type { Policies } from "../types/tables";
+import type { Employees, Policies } from "../types/tables";
+import type { RecordId } from "../types/utils";
 
 interface PoliciesProps {
   policiesData: Policies[];
   setPoliciesData: Dispatch<SetStateAction<Policies[]>>;
+  employeesData: Employees[];
 }
 
 export default function Policies(props: PoliciesProps) {
@@ -32,6 +34,13 @@ export default function Policies(props: PoliciesProps) {
   const deletingPolicyModalRef = useRef<ConfirmModalHandle>(null);
 
   const handleAddingPolicies = (formData: Record<string, string>) => {
+    const first_name = formData["0"].split(" ")[0];
+    const last_name = formData["0"].split(" ")[1];
+    const employee = props.employeesData.find((e) => {
+      const name = e.name.first_name + e.name.last_name;
+      return name === (first_name + last_name);
+    });
+    const employeeId = employee?.id as RecordId;
     const newRecord: Policies = {
       id: {
         tb: "policies",
@@ -39,14 +48,14 @@ export default function Policies(props: PoliciesProps) {
           String: uuidv4(),
         },
       },
+      employeeId,
       name: {
-        first_name: formData["0"],
-        last_name: formData["1"],
+        first_name,
+        last_name,
       },
-      employeeId: { tb: "employees", id: { String: formData["2"] } }, // Dummy employeeId
-      plan: formData["3"],
-      status: formData["4"],
-      effective_date: formData["5"],
+      plan: formData["1"],
+      status: formData["2"],
+      effective_date: formData["3"],
     };
     setPoliciesData((prev) => [...prev, newRecord]);
   };
@@ -74,12 +83,10 @@ export default function Policies(props: PoliciesProps) {
     setEditingIndex(index);
     const policy = policiesData[index];
     const initialData = {
-      "0": policy.name.first_name,
-      "1": policy.name.last_name,
-      "2": policy.employeeId.id.String,
-      "3": policy.plan,
-      "4": policy.status,
-      "5": policy.effective_date,
+      "0": policy.name.first_name + " " + policy.name.last_name,
+      "1": policy.plan,
+      "2": policy.status,
+      "3": policy.effective_date,
     };
     editPolicyModalRef.current?.open(initialData);
   };
@@ -155,6 +162,7 @@ export default function Policies(props: PoliciesProps) {
         ref={addPolicyModalRef}
         config={policyFormConfig}
         onClick={handleAddingPolicies}
+        employees={props.employeesData}
       />
       <Modal
         heading="Edit Policies"

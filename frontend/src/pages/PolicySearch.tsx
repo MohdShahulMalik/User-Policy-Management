@@ -74,9 +74,7 @@ export default function Policies(props: PoliciesProps) {
         (e) => e.id.id.String === userId,
       );
       const initialData = {
-        "0": employee?.name.first_name || "",
-        "1": employee?.name.last_name || "",
-        "2": userId,
+        "0": employee?.name.first_name + " " + employee?.name.last_name|| "",
       };
       addPolicyModalRef.current?.open(initialData);
     } else {

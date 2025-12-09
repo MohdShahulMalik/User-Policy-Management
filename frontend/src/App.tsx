@@ -33,6 +33,7 @@ function App() {
             <Policies
               policiesData={policies}
               setPoliciesData={setPolicies}
+              employeesData={employees}
             />
           }
         />

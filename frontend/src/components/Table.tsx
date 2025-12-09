@@ -12,8 +12,8 @@ interface TableProps {
 }
 
 // Helper function to get nested property values
-function getNestedValue(obj: any, path: string) {
-  return path.split(".").reduce((acc, part) => acc && acc[part], obj);
+function getNestedValue(obj: Employees | Policies, path: string) {
+  return path.split(".").reduce((acc: any, part) => acc && acc[part], obj);
 }
 
 interface HeaderConfig {

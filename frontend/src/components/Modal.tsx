@@ -8,6 +8,7 @@ import {
 import type { FormFields } from "../types/utils";
 import Button from "./Button";
 import clsx from "clsx";
+import type { Employees } from "../types/tables";
 
 interface ModalProps {
   config: FormFields[];
@@ -19,7 +20,8 @@ interface ModalProps {
     | "Edit Policies";
   onClick: (formData: Record<string, string>) => void;
   initialData?: Record<string, string>;
-  disabled?: boolean,
+  disabled?: boolean;
+  employees?: Employees[]
 }
 
 export interface ModalHandle {
@@ -56,13 +58,17 @@ const Modal = forwardRef<ModalHandle, ModalProps>((props, ref) => {
   };
 
   const renderField = (field: FormFields, index: number) => {
-    const inputClasses = "w-full px-3 py-2 border border-border-default rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors";
-    
+    const inputClasses =
+      "w-full px-3 py-2 border border-border-default rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors";
+
     switch (field.type) {
       case "select":
         return (
           <select
-            className={clsx(inputClasses, "bg-surface-700 cursor-pointer appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEgMUw2IDZMMTEgMSIgc3Ryb2tlPSIjNjY2IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==')] bg-[length:12px] bg-[right_1.125rem_center] bg-no-repeat pr-10")}
+            className={clsx(
+              inputClasses,
+              "cursor-pointer appearance-none bg-surface-700 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEgMUw2IDZMMTEgMSIgc3Ryb2tlPSIjNjY2IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==')] bg-[length:12px] bg-[right_1.125rem_center] bg-no-repeat pr-10",
+            )}
             value={formData[index] || ""}
             onChange={(e) => handleChange(index, e.target.value)}
             required
@@ -78,7 +84,7 @@ const Modal = forwardRef<ModalHandle, ModalProps>((props, ref) => {
       case "date":
         return (
           <input
-            className={clsx(inputClasses, "bg-surface-700 cursor-pointer")}
+            className={clsx(inputClasses, "cursor-pointer bg-surface-700")}
             type="date"
             value={formData[index] || ""}
             onChange={(e) => handleChange(index, e.target.value)}
@@ -86,8 +92,7 @@ const Modal = forwardRef<ModalHandle, ModalProps>((props, ref) => {
           />
         );
       default:
-        
-        if (props.disabled && index < 3) {
+        if (props.disabled && index === 0) {
           return (
             <input
               className={clsx(inputClasses, "bg-surface-800")}
@@ -97,6 +102,32 @@ const Modal = forwardRef<ModalHandle, ModalProps>((props, ref) => {
               required
               disabled
             />
+          );
+        } else if (
+          props.heading.split(" ")[1] === "Policies" && props.heading.split(" ")[0] === "Add" &&
+          (field.name === "name" || field.name === "employee_id")
+        ) {
+          const listId = `${field.name}-suggestions`;
+          return (
+            <>
+              <input
+                className={clsx(inputClasses, "bg-surface-700", "hide-datalist-arrow")}
+                type={field.type}
+                value={formData[index] || ""}
+                onChange={(e) => handleChange(index, e.target.value)}
+                list={listId}
+                required
+              />
+              {field.name === "name" && (
+                <datalist id={listId}>
+                  {props.employees?.map((e, i) => (
+                    <option key={i}>
+                      {e.name.first_name} {e.name.last_name}
+                    </option>
+                  ))}
+                </datalist>
+              )}
+            </>
           );
         }
 
@@ -120,21 +151,17 @@ const Modal = forwardRef<ModalHandle, ModalProps>((props, ref) => {
       )}
       ref={dialogRef}
     >
-      <h1 className="font-bold text-[1.25rem]">{props.heading}</h1>
-      <hr className="my-4"/>
+      <h1 className="text-[1.25rem] font-bold">{props.heading}</h1>
+      <hr className="my-4" />
       <form className="grid gap-3" onSubmit={handleSubmit}>
         {props.config.map((field: FormFields, index: number) => (
-          <div className = "grid gap-1" key={index}>
+          <div className="grid gap-1" key={index}>
             <label>{field.label}</label>
             {renderField(field, index)}
           </div>
         ))}
         <article className="flex gap-2">
-          <Button
-            text={buttonText}
-            size="medium"
-            type="submit"
-          />
+          <Button text={buttonText} size="medium" type="submit" />
           <Button
             size="medium"
             text="Cancel"
@@ -178,7 +205,7 @@ const ConfirmModal = forwardRef<ConfirmModalHandle, ConfirmModalProps>(
         className="fixed top-1/2 left-1/2 m-0 w-96 -translate-x-1/2 -translate-y-1/2 rounded-lg p-6"
         ref={dialogRef}
       >
-        <h1 className="font-bold text-[1.25rem]">Delete {props.heading}</h1>
+        <h1 className="text-[1.25rem] font-bold">Delete {props.heading}</h1>
         <form className="grid gap-4" onSubmit={handleConfirm}>
           <p>This action cannot be undone</p>
           <article className="flex gap-2">
@@ -188,11 +215,7 @@ const ConfirmModal = forwardRef<ConfirmModalHandle, ConfirmModalProps>(
               type="button"
               onClick={() => dialogRef.current?.close()}
             />
-            <Button
-              text="Delete"
-              size="medium"
-              type="submit"
-            />
+            <Button text="Delete" size="medium" type="submit" />
           </article>
         </form>
       </dialog>
