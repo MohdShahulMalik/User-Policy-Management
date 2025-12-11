@@ -1,4 +1,4 @@
-import { useRef, useState, type ChangeEvent } from "react";
+import { useRef, useState, useEffect, type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import Modal, {
   type ModalHandle,
@@ -9,15 +9,20 @@ import Button from "../components/Button";
 import { employeeFormConfig } from "../utils/formConfig";
 import Header from "../components/Header";
 import Table from "../components/Table";
-import { v4 as uuidv4 } from "uuid";
-import type { Employees as EmployeesType } from "../types/tables";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { addEmployee, updateEmployee, deleteEmployee } from "../store/employeesSlice";
+import {
+  fetchEmployees,
+  createEmployee,
+  updateEmployeeAsync,
+  deleteEmployeeAsync,
+} from "../store/employeesSlice";
 
 export default function Employees() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const employeesData = useAppSelector((state) => state.employees.data);
+  const { data: employeesData, loading, error } = useAppSelector(
+    (state) => state.employees
+  );
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -26,14 +31,12 @@ export default function Employees() {
   const editEmployeeModalRef = useRef<ModalHandle>(null);
   const deletingEmployeeModalRef = useRef<ConfirmModalHandle>(null);
 
+  useEffect(() => {
+    dispatch(fetchEmployees());
+  }, [dispatch]);
+
   const handleAddingEmployees = (formData: Record<string, string>) => {
-    const newRecord: EmployeesType = {
-      id: {
-        tb: "employees",
-        id: {
-          String: uuidv4(),
-        },
-      },
+    const employeeData = {
       name: {
         first_name: formData["0"],
         last_name: formData["1"],
@@ -41,17 +44,13 @@ export default function Employees() {
       email: formData["2"],
       role: formData["3"],
     };
-    dispatch(addEmployee(newRecord));
+    dispatch(createEmployee(employeeData));
   };
 
   const handleEditingEmployee = (formData: Record<string, string>) => {
     if (editingId === null) return;
 
-    const index = employeesData.findIndex((e) => e.id.id.String === editingId);
-    if (index === -1) return;
-
-    const updatedEmployee: EmployeesType = {
-      ...employeesData[index],
+    const data = {
       name: {
         first_name: formData["0"],
         last_name: formData["1"],
@@ -59,7 +58,7 @@ export default function Employees() {
       email: formData["2"],
       role: formData["3"],
     };
-    dispatch(updateEmployee({ index, employee: updatedEmployee }));
+    dispatch(updateEmployeeAsync({ id: editingId, data }));
   };
 
   const handleOpenAddEmployeeModal = () => {
@@ -87,10 +86,7 @@ export default function Employees() {
 
   const handleDeletion = () => {
     if (deletingId !== null) {
-      const index = employeesData.findIndex((e) => e.id.id.String === deletingId);
-      if (index !== -1) {
-        dispatch(deleteEmployee(index));
-      }
+      dispatch(deleteEmployeeAsync(deletingId));
     }
   };
 
@@ -118,6 +114,14 @@ export default function Employees() {
 
     return searchMatch && roleMatch;
   });
+
+  if (loading && employeesData.length === 0) {
+    return <div className="p-8 text-center text-foreground">Loading employees...</div>;
+  }
+
+  if (error) {
+    return <div className="p-8 text-center text-red-500">Error: {error}</div>;
+  }
 
   return (
     <section className="overflow-hidden rounded-4xl border-4 border-border-default bg-surface-700">

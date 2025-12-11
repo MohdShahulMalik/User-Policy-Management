@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router-dom";
-import { useRef, useState, type ChangeEvent } from "react";
+import { useRef, useState, useEffect, type ChangeEvent } from "react";
 import Modal, {
   type ModalHandle,
   ConfirmModal,
@@ -9,17 +9,24 @@ import Button from "../components/Button";
 import { policyFormConfig } from "../utils/formConfig";
 import Header from "../components/Header";
 import Table from "../components/Table";
-import { v4 as uuidv4 } from "uuid";
-import type { Employees, Policies as PoliciesType } from "../types/tables";
+import type { Employee } from "../types";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { addPolicy, updatePolicy, deletePolicy } from "../store/policiesSlice";
+import {
+  fetchPolicies,
+  createPolicy,
+  updatePolicyAsync,
+  deletePolicyAsync,
+} from "../store/policiesSlice";
+import { fetchEmployees } from "../store/employeesSlice";
 
 export default function Policies() {
   const [searchParams] = useSearchParams();
   const userId = searchParams.get("userId");
 
   const dispatch = useAppDispatch();
-  const policiesData = useAppSelector((state) => state.policies.data);
+  const { data: policiesData, loading, error } = useAppSelector(
+    (state) => state.policies
+  );
   const employeesData = useAppSelector((state) => state.employees.data);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -29,56 +36,54 @@ export default function Policies() {
   const editPolicyModalRef = useRef<ModalHandle>(null);
   const deletingPolicyModalRef = useRef<ConfirmModalHandle>(null);
 
+  useEffect(() => {
+    dispatch(fetchPolicies());
+    dispatch(fetchEmployees());
+  }, [dispatch]);
+
   const handleAddingPolicies = (formData: Record<string, string>) => {
-    const first_name = formData["0"].split(" ")[0];
-    const last_name = formData["0"].split(" ")[1];
-    const employee = employeesData.find((e: Employees) => {
+    const emp_first_name = formData["0"].split(" ")[0];
+    const emp_last_name = formData["0"].split(" ")[1] || "";
+    const employee = employeesData.find((e: Employee) => {
       const name = e.name.first_name + e.name.last_name;
-      return name === (first_name + last_name);
+      return name === emp_first_name + emp_last_name;
     });
 
-    if(!employee){
+    if (!employee) {
       console.log("Error, no employee found");
       return;
     }
 
-    const employeeId = employee.id;
-    const newRecord: PoliciesType = {
-      id: {
-        tb: "policies",
-        id: {
-          String: uuidv4(),
-        },
-      },
-      employeeId,
+    const first_name = formData["1"].split(" ")[0];
+    const last_name = formData["1"].split(" ")[1] || "";
+    
+
+    const policyData = {
       name: {
         first_name,
         last_name,
       },
-      plan: formData["1"],
-      status: formData["2"],
-      effective_date: formData["3"],
+      employee_id: employee.id,
+      plan: formData["2"],
+      status: formData["3"],
+      effective_date: formData["4"],
     };
-    dispatch(addPolicy(newRecord));
+    dispatch(createPolicy(policyData));
   };
 
   const handleEditingPolicy = (formData: Record<string, string>) => {
     if (editingId === null) return;
 
-    const index = policiesData.findIndex((p) => p.id.id.String === editingId);
-    if (index === -1) return;
-
-    const updatedPolicy: PoliciesType = {
-      ...policiesData[index],
+    const data = {
       name: {
-        first_name: formData["0"],
-        last_name: formData["1"],
+        first_name: formData["1"].split(" ")[0],
+        last_name: formData["1"].split(" ")[1] || "",
       },
-      plan: formData["3"],
-      status: formData["4"],
-      effective_date: formData["5"],
+      plan: formData["2"],
+      status: formData["3"],
+      effective_date: formData["4"],
     };
-    dispatch(updatePolicy({ index, policy: updatedPolicy }));
+    dispatch(updatePolicyAsync({ id: editingId, data }));
   };
 
   const handleOpenAddPolicyModal = () => {
@@ -106,10 +111,7 @@ export default function Policies() {
 
   const handleDeletion = () => {
     if (deletingId !== null) {
-      const index = policiesData.findIndex((p) => p.id.id.String === deletingId);
-      if (index !== -1) {
-        dispatch(deletePolicy(index));
-      }
+      dispatch(deletePolicyAsync(deletingId));
     }
   };
 
@@ -132,10 +134,18 @@ export default function Policies() {
 
     const statusMatch = statusFilter === "" || policy.status === statusFilter;
 
-    const userMatch = !userId || policy.employeeId.id.String === userId;
+    const userMatch = !userId || policy.employee_id.id.String === userId;
 
     return searchMatch && statusMatch && userMatch;
   });
+
+  if (loading && policiesData.length === 0) {
+    return <div className="p-8 text-center text-foreground">Loading policies...</div>;
+  }
+
+  if (error) {
+    return <div className="p-8 text-center text-red-500">Error: {error}</div>;
+  }
 
   return (
     <section className="overflow-hidden rounded-4xl border-4 border-border-default bg-surface-700">
