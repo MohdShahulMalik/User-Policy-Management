@@ -10,7 +10,7 @@ import { policyFormConfig } from "../utils/formConfig";
 import Header from "../components/Header";
 import Table from "../components/Table";
 import { v4 as uuidv4 } from "uuid";
-import type { Policies as PoliciesType } from "../types/tables";
+import type { Employees, Policies as PoliciesType } from "../types/tables";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { addPolicy, updatePolicy, deletePolicy } from "../store/policiesSlice";
 
@@ -20,8 +20,9 @@ export default function Policies() {
 
   const dispatch = useAppDispatch();
   const policiesData = useAppSelector((state) => state.policies.data);
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
+  const employeesData = useAppSelector((state) => state.employees.data);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const addPolicyModalRef = useRef<ModalHandle>(null);
@@ -29,6 +30,19 @@ export default function Policies() {
   const deletingPolicyModalRef = useRef<ConfirmModalHandle>(null);
 
   const handleAddingPolicies = (formData: Record<string, string>) => {
+    const first_name = formData["0"].split(" ")[0];
+    const last_name = formData["0"].split(" ")[1];
+    const employee = employeesData.find((e: Employees) => {
+      const name = e.name.first_name + e.name.last_name;
+      return name === (first_name + last_name);
+    });
+
+    if(!employee){
+      console.log("Error, no employee found");
+      return;
+    }
+
+    const employeeId = employee.id;
     const newRecord: PoliciesType = {
       id: {
         tb: "policies",
@@ -36,23 +50,26 @@ export default function Policies() {
           String: uuidv4(),
         },
       },
+      employeeId,
       name: {
-        first_name: formData["0"],
-        last_name: formData["1"],
+        first_name,
+        last_name,
       },
-      employeeId: { tb: "employees", id: { String: formData["2"] } },
-      plan: formData["3"],
-      status: formData["4"],
-      effective_date: formData["5"],
+      plan: formData["1"],
+      status: formData["2"],
+      effective_date: formData["3"],
     };
     dispatch(addPolicy(newRecord));
   };
 
   const handleEditingPolicy = (formData: Record<string, string>) => {
-    if (editingIndex === null) return;
+    if (editingId === null) return;
+
+    const index = policiesData.findIndex((p) => p.id.id.String === editingId);
+    if (index === -1) return;
 
     const updatedPolicy: PoliciesType = {
-      ...policiesData[editingIndex],
+      ...policiesData[index],
       name: {
         first_name: formData["0"],
         last_name: formData["1"],
@@ -61,35 +78,38 @@ export default function Policies() {
       status: formData["4"],
       effective_date: formData["5"],
     };
-    dispatch(updatePolicy({ index: editingIndex, policy: updatedPolicy }));
+    dispatch(updatePolicy({ index, policy: updatedPolicy }));
   };
 
   const handleOpenAddPolicyModal = () => {
     addPolicyModalRef.current?.open();
   };
 
-  const handleOpenEditPolicyModal = (index: number) => {
-    setEditingIndex(index);
-    const policy = policiesData[index];
+  const handleOpenEditPolicyModal = (id: string) => {
+    setEditingId(id);
+    const policy = policiesData.find((p) => p.id.id.String === id);
+    if (!policy) return;
+
     const initialData = {
-      "0": policy.name.first_name,
-      "1": policy.name.last_name,
-      "2": policy.employeeId.id.String,
-      "3": policy.plan,
-      "4": policy.status,
-      "5": policy.effective_date,
+      "0": policy.name.first_name + " " + policy.name.last_name,
+      "1": policy.plan,
+      "2": policy.status,
+      "3": policy.effective_date,
     };
     editPolicyModalRef.current?.open(initialData);
   };
 
-  const handleOpenDeletionModal = (index: number) => {
-    setDeletingIndex(index);
+  const handleOpenDeletionModal = (id: string) => {
+    setDeletingId(id);
     deletingPolicyModalRef.current?.open();
   };
 
   const handleDeletion = () => {
-    if (deletingIndex !== null) {
-      dispatch(deletePolicy(deletingIndex));
+    if (deletingId !== null) {
+      const index = policiesData.findIndex((p) => p.id.id.String === deletingId);
+      if (index !== -1) {
+        dispatch(deletePolicy(index));
+      }
     }
   };
 
@@ -153,6 +173,7 @@ export default function Policies() {
         ref={addPolicyModalRef}
         config={policyFormConfig}
         onClick={handleAddingPolicies}
+        employees={employeesData}
       />
       <Modal
         heading="Edit Policies"

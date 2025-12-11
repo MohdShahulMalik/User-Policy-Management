@@ -57,6 +57,7 @@
 
 :root {
   --surface-700: oklch(1 0.1 266);
+  --sruface-750: oklch(0.98 0.1 266)
   --surface-800: oklch(0.96 0.1 266);
   --surface-900: oklch(0.92 0.1 266);
 }
@@ -67,3 +68,10 @@ html, body {
   /* background: radial-gradient(ellipse at 50% 30%, var(--surface-700) 0%, var(--surface-800) 45%, var(--surface-900) 100%) !important; */
 }
 
+
+/* Hide the datalist arrow in Webkit browsers */
+.hide-datalist-arrow::-webkit-calendar-picker-indicator {
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+}

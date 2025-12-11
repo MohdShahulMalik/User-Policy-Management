@@ -18,8 +18,8 @@ export default function Employees() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const employeesData = useAppSelector((state) => state.employees.data);
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [roleFilter, setRoleFilter] = useState<string>("");
   const addEmployeeModalRef = useRef<ModalHandle>(null);
@@ -45,10 +45,13 @@ export default function Employees() {
   };
 
   const handleEditingEmployee = (formData: Record<string, string>) => {
-    if (editingIndex === null) return;
+    if (editingId === null) return;
+
+    const index = employeesData.findIndex((e) => e.id.id.String === editingId);
+    if (index === -1) return;
 
     const updatedEmployee: EmployeesType = {
-      ...employeesData[editingIndex],
+      ...employeesData[index],
       name: {
         first_name: formData["0"],
         last_name: formData["1"],
@@ -56,16 +59,18 @@ export default function Employees() {
       email: formData["2"],
       role: formData["3"],
     };
-    dispatch(updateEmployee({ index: editingIndex, employee: updatedEmployee }));
+    dispatch(updateEmployee({ index, employee: updatedEmployee }));
   };
 
   const handleOpenAddEmployeeModal = () => {
     addEmployeeModalRef.current?.open();
   };
 
-  const handleOpenEditEmployeeModal = (index: number) => {
-    setEditingIndex(index);
-    const employee = employeesData[index];
+  const handleOpenEditEmployeeModal = (id: string) => {
+    setEditingId(id);
+    const employee = employeesData.find((e) => e.id.id.String === id);
+    if (!employee) return;
+
     const initialData = {
       "0": employee.name.first_name,
       "1": employee.name.last_name,
@@ -75,14 +80,17 @@ export default function Employees() {
     editEmployeeModalRef.current?.open(initialData);
   };
 
-  const handleOpenDeletionModal = (index: number) => {
-    setDeletingIndex(index);
+  const handleOpenDeletionModal = (id: string) => {
+    setDeletingId(id);
     deletingEmployeeModalRef.current?.open();
   };
 
   const handleDeletion = () => {
-    if (deletingIndex !== null) {
-      dispatch(deleteEmployee(deletingIndex));
+    if (deletingId !== null) {
+      const index = employeesData.findIndex((e) => e.id.id.String === deletingId);
+      if (index !== -1) {
+        dispatch(deleteEmployee(index));
+      }
     }
   };
 
@@ -94,9 +102,8 @@ export default function Employees() {
     setRoleFilter(e.target.value);
   };
 
-  const handleViewPolicies = (index: number) => {
-    const employee = employeesData[index];
-    navigate(`/policy-search?userId=${employee.id.id.String}`);
+  const handleViewPolicies = (id: string) => {
+    navigate(`/policy-search?userId=${id}`);
   };
 
   const filteredEmployeesData = employeesData.filter((employee) => {

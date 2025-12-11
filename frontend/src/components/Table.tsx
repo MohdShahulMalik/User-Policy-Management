@@ -6,14 +6,14 @@ interface TableProps {
   className?: string;
   tableData: Employees[] | Policies[];
   tableName: "Employees" | "Policies";
-  onEditClick: (index: number) => void;
-  onDeleteClick: (index: number) => void;
-  onViewPoliciesClick?: (index: number) => void;
+  onEditClick: (id: string) => void;
+  onDeleteClick: (id: string) => void;
+  onViewPoliciesClick?: (id: string) => void;
 }
 
 // Helper function to get nested property values
-function getNestedValue(obj: any, path: string) {
-  return path.split(".").reduce((acc, part) => acc && acc[part], obj);
+function getNestedValue(obj: Employees | Policies, path: string) {
+  return path.split(".").reduce((acc: any, part) => acc && acc[part], obj);
 }
 
 interface HeaderConfig {
@@ -68,46 +68,49 @@ export default function Table(props: TableProps) {
       </thead>
 
       <tbody className="text-foreground-muted">
-        {props.tableData.map((row, rowIndex) => (
-          <tr className="border-b" key={getNestedValue(row, "id") || rowIndex}>
-            {headers.map((header, colIndex) => (
-              <td key={colIndex} className="px-4 py-2">
-                {header.isAction ? (
-                  <article className="flex gap-1">
-                    <Button
-                      text="Edit"
-                      size="small"
-                      onClick={() => props.onEditClick(rowIndex)}
-                    />
-                    {props.tableName === "Employees" && props.onViewPoliciesClick && (
+        {props.tableData.map((row, rowIndex) => {
+          const recordId = row.id.id.String;
+          return (
+            <tr className="border-b" key={recordId || rowIndex}>
+              {headers.map((header, colIndex) => (
+                <td key={colIndex} className="px-4 py-2">
+                  {header.isAction ? (
+                    <article className="flex gap-1">
                       <Button
-                        text="View Policies"
+                        text="Edit"
                         size="small"
-                        onClick={() => props.onViewPoliciesClick?.(rowIndex)}
+                        onClick={() => props.onEditClick(recordId)}
                       />
-                    )}
-                    <Button
-                      danger
-                      text="Delete"
-                      size="small"
-                      onClick={() => props.onDeleteClick(rowIndex)}
-                    />
-                  </article>
-                ) : header.dataKey ? (
-                  Array.isArray(header.dataKey) ? (
-                    header.dataKey
-                      .map((key) => getNestedValue(row, key))
-                      .join(" ")
+                      {props.tableName === "Employees" && props.onViewPoliciesClick && (
+                        <Button
+                          text="View Policies"
+                          size="small"
+                          onClick={() => props.onViewPoliciesClick?.(recordId)}
+                        />
+                      )}
+                      <Button
+                        danger
+                        text="Delete"
+                        size="small"
+                        onClick={() => props.onDeleteClick(recordId)}
+                      />
+                    </article>
+                  ) : header.dataKey ? (
+                    Array.isArray(header.dataKey) ? (
+                      header.dataKey
+                        .map((key) => getNestedValue(row, key))
+                        .join(" ")
+                    ) : (
+                      getNestedValue(row, header.dataKey)
+                    )
                   ) : (
-                    getNestedValue(row, header.dataKey)
-                  )
-                ) : (
-                  ""
-                )}
-              </td>
-            ))}
-          </tr>
-        ))}
+                    ""
+                  )}
+                </td>
+              ))}
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );
